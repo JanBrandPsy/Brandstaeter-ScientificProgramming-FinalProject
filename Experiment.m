@@ -1,8 +1,8 @@
 %Plan: Subliminale Cueiung Task (nach Schoeberl et al., 2014)
 %Erstmal Stimuli machen: Fixationskreuz, Cue links oder rechts weißer Kreis, bunte rotierte Landoltringe in 3 weißen Kreisen
-% mit Randperm vorsorgen was alles randomisiert wird an reizen
-%TrialLoop: Fixation, Blankscreen 700ms, Cue 16ms oder nix, Target und Distraktoren, Reaktion aufnehmen, Cue visibility assessment?, ITI
-%optimieren der timings usw
+% mit random vorsorgen was alles randomisiert wird an reizen
+%TrialLoop: Fixation, Blankscreen 700ms, Cue 16ms oder nix, Target und Distraktoren, Reaktion aufnehmen, Cue visibility assessment, ITI
+%optimieren der timings wie in letzter UE-Einheit
 
 %Basics
 Screen('Preference', 'SkipSyncTests', 1); 
@@ -30,9 +30,7 @@ fixcrossTexture = Screen('MakeTexture',myWindow,fixCross);
 % und packe die jeweils in 4 Texturen
 % im Trial dann bei DrawTexture mit [modulateColor] die Farbe anpassen
 
-%Danke Melissa Buechlein, die 2017 im Matlabhilfecenter ne ähnliche Frage hatte und
-%vorallem David Goodmanson der ne verständlich Antwort gepostet hat
-
+%Danke Matlabhilfecenter 
 [xx yy] = meshgrid([-110:110],[-110:110]); %meshgrid macht ein Koordinatensystem
 AussenKreis = zeros(size(xx)); %genauso große Bitmap 
 AussenKreis((xx.^2+yy.^2)<100^2)=1; %% setze die Pixel 1, deren Abstand vom Ursprung innerhalb des Kreis Radius ist
@@ -99,11 +97,9 @@ CueDict = containers.Map('KeyType','double','ValueType','any');
 CueDict(CUE_LINKS) = LinksCue;
 CueDict(CUE_RECHTS) = RechtsCue;
 CueDict(CUE_NO) = [];
-rCue = randi(3,1,nTrials); 
+rCue = randi(3,1,nTrials); %sollte man eher balancieren
 
 %Landolt-Positionen
-%TargetPosi links, rechts (da wo Cue war, wenn er da war)
-%Distraktoren Positionen halt da wo nicht Target
 LandoltPosLinks = [550 430 770 650]; LandoltPosMitte = [850 430 1070 650]; LandoltPosRechts = [1150 430 1370 650];
 LPOS_LINKS = 1; LPOS_MITTE = 2; LPOS_RECHTS = 3;
 LPosDict = containers.Map('KeyType','double','ValueType','any');
@@ -180,7 +176,7 @@ ColourLabel(3) = 'green';
 %Timings für Screen('Flip'[,when])
 tFix = 0.5; %FixCross
 tBlankPre = 0.7; %Blank Screen danach
-tCue = 0.016; %0.016 subliminaler Cue -> ist meine Bildschirmwiederholrate überhaupt so schnell??
+tCue = 0.016; %bei meinem 60Hz Bildschirm ist 16ms doch ziemlich genau 1 Frame lang, fehleranfällig?
 tTarget = 0.4; %Target
 tBlankPost = 1; %blankScreen Reagier Zeit
 ITI = rand(1,nTrials);
@@ -196,6 +192,9 @@ KbWait;
 %Fixcross, Blankscreen, Cue in einen von 3 Zuständen, t0(3 Kreise + random farbige und rotierte Landolt),Response = t1, abspeichern, visibilityabfrage?, nächster Trial
 for i = 1:nTrials;
 
+rt = NaN;
+respKey = 'NA';
+respKey2 = 'NA';
 %--FixCross--
 
 Screen('DrawTexture', myWindow, fixcrossTexture);
