@@ -1,1 +1,0 @@
-PsychPortAudio('audioread?')
